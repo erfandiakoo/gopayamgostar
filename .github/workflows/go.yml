@@ -22,12 +22,6 @@ jobs:
         run: |
           go test -failfast -race -cover -coverprofile=coverage.txt -covermode=atomic -p 100 -cpu 1,2 -bench . -benchmem > test.log
           cat test.log
-      - name: Failed Logs
-        if: failure()
-        run: |
-          cat test.log
-          docker ps
-          docker logs keycloak
       - name: CodeCov
         uses: codecov/codecov-action@v1
         with:
