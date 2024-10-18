@@ -3,7 +3,7 @@ package gopayamgostar_test
 import (
 	"testing"
 
-	"github.com/erfandiakoo/gopayamgostar/v1"
+	"github.com/erfandiakoo/gopayamgostar/v2"
 	"github.com/stretchr/testify/assert"
 )
 

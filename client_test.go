@@ -16,7 +16,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/erfandiakoo/gopayamgostar/v1"
+	"github.com/erfandiakoo/gopayamgostar/v2"
 	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/exp/rand"
