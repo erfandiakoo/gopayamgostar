@@ -1,4 +1,4 @@
-module github.com/erfandiakoo/gopayamgostar
+module github.com/erfandiakoo/gopayamgostar/v1
 
 go 1.23.1
 
