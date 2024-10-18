@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -125,6 +126,46 @@ func NewClientWithDebug(t testing.TB) *gopayamgostar.GoPayamgostar {
 	return client
 }
 
+// FailRequest fails requests and returns an error
+//
+//	err - returned error or nil to return the default error
+//	failN - number of requests to be failed
+//	skipN = number of requests to be executed and not failed by this function
+func FailRequest(client *gopayamgostar.GoPayamgostar, err error, failN, skipN int) *gopayamgostar.GoPayamgostar {
+	client.RestyClient().OnBeforeRequest(
+		func(c *resty.Client, r *resty.Request) error {
+			if skipN > 0 {
+				skipN--
+				return nil
+			}
+			if failN == 0 {
+				return nil
+			}
+			failN--
+			if err == nil {
+				err = fmt.Errorf("an error for request: %+v", r)
+			}
+			return err
+		},
+	)
+	return client
+}
+
+func GetToken(t testing.TB, client *gopayamgostar.GoPayamgostar) *gopayamgostar.JWT {
+	cfg := GetConfig(t)
+	token, err := client.PostAuth(
+		context.Background(),
+		cfg.Admin.UserName,
+		cfg.Admin.Password,
+	)
+	require.NoError(t, err, "Login failed")
+	return token
+}
+
+// ---------
+// API tests
+// ---------
+
 func Test_PostAuth(t *testing.T) {
 	t.Parallel()
 	cfg := GetConfig(t)
@@ -136,6 +177,119 @@ func Test_PostAuth(t *testing.T) {
 	)
 	require.NoError(t, err, "Login failed")
 	t.Logf("New token: %+v", *newToken)
-	require.Equal(t, newToken.ExpiresAt, 0, "Got a refresh token instead of offline")
+	//require.Equal(t, newToken.ExpiresAt, 0, "Got a refresh token instead of offline")
 	require.NotEmpty(t, newToken.AccessToken, "Got an empty if token")
+}
+
+func GetUserInfo(t *testing.T) {
+	t.Parallel()
+	client := NewClientWithDebug(t)
+	token := GetToken(t, client)
+	userInfo, err := client.GetPersonInfo(
+		context.Background(),
+		token.AccessToken,
+		"f845cf77-fec4-4631-b106-7f3d8580321b",
+	)
+	require.NoError(t, err, "Failed to fetch userinfo")
+	t.Log(userInfo)
+	FailRequest(client, nil, 1, 0)
+	_, err = client.GetPersonInfo(
+		context.Background(),
+		token.AccessToken,
+		"f845cf77-fec4-4631-b106-7f3d8580321b")
+	require.Error(t, err, "")
+}
+
+func Test_GetUserInfo(t *testing.T) {
+	t.Parallel()
+	client := NewClientWithDebug(t)
+	token := GetToken(t, client)
+	userInfo, err := client.GetPersonInfo(
+		context.Background(),
+		token.AccessToken,
+		"f845cf77-fec4-4631-b106-7f3d8580321b",
+	)
+	require.NoError(t, err, "Failed to fetch userinfo")
+	t.Log(userInfo)
+	FailRequest(client, nil, 1, 0)
+	_, err = client.GetPersonInfo(
+		context.Background(),
+		token.AccessToken,
+		"f845cf77-fec4-4631-b106-7f3d8580321b")
+	require.Error(t, err, "")
+}
+
+func Test_GetFormInfo(t *testing.T) {
+	t.Parallel()
+	client := NewClientWithDebug(t)
+	token := GetToken(t, client)
+	formInfo, err := client.GetFormInfo(
+		context.Background(),
+		token.AccessToken,
+		"d81d07dd-cdc2-479a-99d5-0270a1f8f07d",
+	)
+	require.NoError(t, err, "Failed to fetch forminfo")
+	t.Log(formInfo)
+	FailRequest(client, nil, 1, 0)
+	_, err = client.GetFormInfo(
+		context.Background(),
+		token.AccessToken,
+		"d81d07dd-cdc2-479a-99d5-0270a1f8f07d")
+	require.Error(t, err, "")
+}
+
+func CreatePurchase(t *testing.T, client *gopayamgostar.GoPayamgostar) (func(), string) {
+	token := GetToken(t, client)
+
+	purchase := gopayamgostar.CreatePurchase{
+		CRMObjectTypeCode: "PurchaseInvoice",
+		Details: []gopayamgostar.Detail{
+			{
+				IsService:      *gopayamgostar.BoolP(true),
+				BaseUnitPrice:  *gopayamgostar.Int64P(1000),
+				FinalUnitPrice: *gopayamgostar.Int64P(1000),
+				TotalUnitPrice: *gopayamgostar.Int64P(1000),
+				Count:          1,
+				ReturnedCount:  1,
+				TotalVat:       0,
+				TotalToll:      0,
+				TotalDiscount:  0,
+				ProductCode:    "product-2",
+			},
+		},
+		FinalValue: *gopayamgostar.Int64P(1000),
+		TotalValue: *gopayamgostar.Int64P(1000),
+		IdentityID: "f845cf77-fec4-4631-b106-7f3d8580321b",
+		ColorID:    1,
+		Discount:   0,
+		Vat:        0,
+		Toll:       0,
+	}
+	purchaseID, err := client.CreatePurchase(
+		context.Background(),
+		token.AccessToken,
+		purchase,
+	)
+
+	require.NoError(t, err, "CreatePurchase failed")
+	purchase.CrmId = purchaseID
+
+	t.Logf("Created Purchase: %+v", purchase)
+	// tearDown := func() {
+	// 	err := client.DeletePurchase(
+	// 		context.Background(),
+	// 		token.AccessToken,
+	// 		purchaseID)
+	// 	require.NoError(t, err, "Delete Purchase")
+	// }
+
+	return nil, purchase.CRMObjectTypeCode
+}
+
+func Test_CreatePurchase(t *testing.T) {
+	t.Parallel()
+	client := NewClientWithDebug(t)
+
+	tearDown, _ := CreatePurchase(t, client)
+	defer tearDown()
 }

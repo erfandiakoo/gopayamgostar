@@ -2,6 +2,7 @@ package gopayamgostar
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -22,6 +23,7 @@ type GoPayamgostar struct {
 		UpdateFormEndpoint     string
 		GetPersonEndpoint      string
 		CreatePurchaseEndpoint string
+		DeletePurchaseEndpoint string
 	}
 }
 
@@ -42,6 +44,22 @@ func (g *GoPayamgostar) GetRequest(ctx context.Context) *resty.Request {
 			SetContext(ctx).
 			SetError(&err),
 	)
+}
+
+func getID(resp *resty.Response) (string, error) {
+	// Define a struct to match the expected response structure
+	var result struct {
+		CrmId string `json:"crmId"`
+	}
+
+	// Unmarshal the response body into the result struct
+	err := json.Unmarshal(resp.Body(), &result)
+	if err != nil {
+		return "", fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	// Return the CrmId if available
+	return result.CrmId, nil
 }
 
 func injectTracingHeaders(ctx context.Context, req *resty.Request) *resty.Request {
@@ -93,7 +111,8 @@ func NewClient(basePath string, options ...func(*GoPayamgostar)) *GoPayamgostar 
 	c.Config.UpdateFormEndpoint = makeURL("api", "v2", "crmobject", "form", "update")
 	c.Config.FindFormEndpoint = makeURL("api", "v2", "crmobject", "form", "find")
 	c.Config.GetPersonEndpoint = makeURL("api", "v2", "crmobject", "person", "get")
-	c.Config.CreatePurchaseEndpoint = makeURL("api", "v2", "invoice", "purchase", "create")
+	c.Config.CreatePurchaseEndpoint = makeURL("api", "v2", "crmobject", "invoice", "purchase", "create")
+	c.Config.DeletePurchaseEndpoint = makeURL("api", "v2", "crmobject", "invoice", "purchase", "delete")
 
 	for _, option := range options {
 		option(&c)
@@ -148,12 +167,11 @@ func checkForError(resp *resty.Response, err error, errMessage string) error {
 	return nil
 }
 
-func (g *GoPayamgostar) getFullEndpointuRL(path ...string) string {
+func (g *GoPayamgostar) getFullEndpointURL(path ...string) string {
 	path = append([]string{g.basePath, g.Config.AuthEndpoint}, path...)
 	return makeURL(path...)
 }
 
-// PostAuth uses TokenOptions to fetch a token.
 func (g *GoPayamgostar) PostAuth(ctx context.Context, username string, password string) (*JWT, error) {
 	const errMessage = "could not get token"
 
@@ -180,18 +198,82 @@ func (g *GoPayamgostar) PostAuth(ctx context.Context, username string, password 
 	return &token, nil
 }
 
-// GetUserInfo calls the UserInfo endpoint
 func (g *GoPayamgostar) GetPersonInfo(ctx context.Context, accessToken, crmId string) (*PersonInfo, error) {
 	const errMessage = "could not get user info"
 
 	var result PersonInfo
+
+	model := GetRequest{
+		ID:                   crmId,
+		ShowPreviews:         *BoolP(false),
+		ShowExtendedPreviews: *BoolP(true),
+	}
+
 	resp, err := g.GetRequestWithBearerAuth(ctx, accessToken).
+		SetBody(model).
 		SetResult(&result).
-		Post(g.Config.GetPersonEndpoint)
+		Post(g.basePath + "/" + g.Config.GetPersonEndpoint)
 
 	if err := checkForError(resp, err, errMessage); err != nil {
 		return nil, err
 	}
 
 	return &result, nil
+}
+
+func (g *GoPayamgostar) GetFormInfo(ctx context.Context, accessToken, crmId string) (*FormInfo, error) {
+	const errMessage = "could not get form info"
+
+	var result FormInfo
+
+	model := GetRequest{
+		ID:                   crmId,
+		ShowPreviews:         *BoolP(true),
+		ShowExtendedPreviews: *BoolP(true),
+	}
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, accessToken).
+		SetBody(model).
+		SetResult(&result).
+		Post(g.basePath + "/" + g.Config.GetFormEndpoint)
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+func (g *GoPayamgostar) CreatePurchase(ctx context.Context, accessToken string, purchase CreatePurchase) (string, error) {
+	const errMessage = "could not create purchase"
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, accessToken).
+		SetBody(purchase).
+		Post(g.basePath + "/" + g.Config.CreatePurchaseEndpoint)
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return "", err
+	}
+
+	crmid, err := getID(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return crmid, nil
+}
+
+func (g *GoPayamgostar) DeletePurchase(ctx context.Context, accessToken string, purchaseID string) error {
+	const errMessage = "could not delete purchase"
+
+	request := DeleteRequest{
+		Id:     purchaseID,
+		Option: 1,
+	}
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, accessToken).
+		SetBody(request).
+		Post(g.basePath + "/" + g.Config.DeletePurchaseEndpoint)
+
+	return checkForError(resp, err, errMessage)
 }

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"strings"
-	"time"
 )
 
 // GetQueryParams converts the struct to map[string]string
@@ -133,6 +132,16 @@ type AuthRequest struct {
 	PlatformType int    `json:"platformType"`
 }
 
+type GetRequest struct {
+	ID                      string `json:"id"`
+	ShowPreviews            bool   `json:"showPreviews"`
+	ShowExtendedPreviews    bool   `json:"showExtendedPreviews"`
+	IncludeProcessLifePaths bool   `json:"includeProcessLifePaths"`
+	IncludeColor            bool   `json:"includeColor"`
+	IncludeTags             bool   `json:"includeTags"`
+	IncludeListFields       bool   `json:"includeListFields"`
+}
+
 type PersonInfo struct {
 	FirstName                 string          `json:"FirstName"`
 	LastName                  string          `json:"LastName"`
@@ -194,23 +203,23 @@ type PersonInfo struct {
 	CRMObjectTypeCode         string          `json:"CrmObjectTypeCode"`
 	ParentCRMObjectID         interface{}     `json:"ParentCrmObjectId"`
 	ExtendedProperties        []interface{}   `json:"ExtendedProperties"`
-	CreatDate                 time.Time       `json:"CreatDate"`
-	ModifyDate                time.Time       `json:"ModifyDate"`
-	Tags                      []interface{}   `json:"Tags"`
-	RefID                     string          `json:"RefId"`
-	StageID                   interface{}     `json:"StageId"`
-	IdentityIDPreview         AreasOfInterest `json:"IdentityIdPreview"`
-	IdentityID                interface{}     `json:"IdentityId"`
-	Description               string          `json:"Description"`
-	Subject                   string          `json:"Subject"`
-	ProcessLifePaths          []interface{}   `json:"ProcessLifePaths"`
-	Color                     interface{}     `json:"Color"`
-	ModifierIDPreview         AreasOfInterest `json:"ModifierIdPreview"`
-	ModifierID                string          `json:"ModifierId"`
-	CreatorIDPreview          AreasOfInterest `json:"CreatorIdPreview"`
-	CreatorID                 string          `json:"CreatorId"`
-	AssignedToIDPreview       AreasOfInterest `json:"AssignedToIdPreview"`
-	AssignedToID              interface{}     `json:"AssignedToId"`
+	//CreatDate                 time.Time        `json:"CreatDate"`
+	//ModifyDate                time.Time        `json:"ModifyDate"`
+	Tags                []interface{}   `json:"Tags"`
+	RefID               string          `json:"RefId"`
+	StageID             interface{}     `json:"StageId"`
+	IdentityIDPreview   AreasOfInterest `json:"IdentityIdPreview"`
+	IdentityID          interface{}     `json:"IdentityId"`
+	Description         string          `json:"Description"`
+	Subject             string          `json:"Subject"`
+	ProcessLifePaths    []interface{}   `json:"ProcessLifePaths"`
+	Color               interface{}     `json:"Color"`
+	ModifierIDPreview   AreasOfInterest `json:"ModifierIdPreview"`
+	ModifierID          string          `json:"ModifierId"`
+	CreatorIDPreview    AreasOfInterest `json:"CreatorIdPreview"`
+	CreatorID           string          `json:"CreatorId"`
+	AssignedToIDPreview AreasOfInterest `json:"AssignedToIdPreview"`
+	AssignedToID        interface{}     `json:"AssignedToId"`
 }
 
 type AreasOfInterest struct {
@@ -231,4 +240,91 @@ type PhoneContact struct {
 	Extension       string `json:"Extension"`
 	ID              string `json:"Id"`
 	Default         bool   `json:"Default"`
+}
+
+type FormInfo struct {
+	CRMID                     string              `json:"CrmId"`
+	CRMObjectTypeIndexPreview AssignedToIDPreview `json:"CrmObjectTypeIndexPreview"`
+	CRMObjectTypeIndex        int64               `json:"CrmObjectTypeIndex"`
+	CRMObjectTypeName         AssignedToIDPreview `json:"CrmObjectTypeName"`
+	CRMObjectTypeID           string              `json:"CrmObjectTypeId"`
+	CRMObjectTypeCode         string              `json:"CrmObjectTypeCode"`
+	ParentCRMObjectID         interface{}         `json:"ParentCrmObjectId"`
+	ExtendedProperties        []ExtendedProperty  `json:"ExtendedProperties"`
+	Tags                      []interface{}       `json:"Tags"`
+	RefID                     string              `json:"RefId"`
+	StageID                   interface{}         `json:"StageId"`
+	IdentityIDPreview         AssignedToIDPreview `json:"IdentityIdPreview"`
+	IdentityID                string              `json:"IdentityId"`
+	Description               string              `json:"Description"`
+	Subject                   string              `json:"Subject"`
+	ProcessLifePaths          []interface{}       `json:"ProcessLifePaths"`
+	Color                     interface{}         `json:"Color"`
+	ModifierIDPreview         AssignedToIDPreview `json:"ModifierIdPreview"`
+	ModifierID                string              `json:"ModifierId"`
+	CreatorIDPreview          AssignedToIDPreview `json:"CreatorIdPreview"`
+	CreatorID                 string              `json:"CreatorId"`
+	AssignedToIDPreview       AssignedToIDPreview `json:"AssignedToIdPreview"`
+	AssignedToID              interface{}         `json:"AssignedToId"`
+}
+
+type AssignedToIDPreview struct {
+	Name string `json:"Name"`
+}
+
+type ExtendedProperty struct {
+	Value   string      `json:"Value"`
+	UserKey string      `json:"UserKey"`
+	Preview interface{} `json:"Preview"`
+}
+
+type CreatePurchase struct {
+	CrmId              string             `json:"crmId,omitempty"`
+	CRMObjectTypeCode  string             `json:"crmObjectTypeCode"`
+	Details            []Detail           `json:"details"`
+	Discount           int64              `json:"discount"`
+	FinalValue         int64              `json:"finalValue"`
+	Toll               int64              `json:"toll"`
+	TotalValue         int64              `json:"totalValue"`
+	Vat                int64              `json:"vat"`
+	ParentCRMObjectID  *string            `json:"parentCrmObjectId"`
+	ExtendedProperties []ExtendedProperty `json:"extendedProperties"`
+	Tags               *[]string          `json:"tags"`
+	RefID              *string            `json:"refId"`
+	StageID            *string            `json:"stageId"`
+	ColorID            int64              `json:"colorId"`
+	IdentityID         string             `json:"identityId"`
+	Description        *string            `json:"description"`
+	Subject            *string            `json:"subject"`
+	AssignedToUserName *string            `json:"assignedToUserName"`
+	Number             *string            `json:"number"`
+	PriceListName      *string            `json:"priceListName"`
+	AdditionalCosts    *string            `json:"additionalCosts"`
+	InvoiceDate        *string            `json:"invoiceDate"`
+	ExpireDate         *string            `json:"expireDate"`
+	DiscountPercent    *string            `json:"discountPercent"`
+	RelatedQuoteID     *string            `json:"relatedQuoteId"`
+}
+
+type Detail struct {
+	IsService           bool   `json:"isService"`
+	BaseUnitPrice       int64  `json:"baseUnitPrice"`
+	FinalUnitPrice      int64  `json:"finalUnitPrice"`
+	Count               int64  `json:"count"`
+	ReturnedCount       int64  `json:"returnedCount"`
+	TotalUnitPrice      int64  `json:"totalUnitPrice"`
+	TotalDiscount       int64  `json:"totalDiscount"`
+	TotalVat            int64  `json:"totalVat"`
+	TotalToll           int64  `json:"totalToll"`
+	ProductCode         string `json:"productCode"`
+	ProductID           string `json:"productId"`
+	ProductName         string `json:"productName"`
+	DiscountPercent     string `json:"discountPercent"`
+	DetailDescription   string `json:"detailDescription"`
+	ProductUnitTypeName string `json:"productUnitTypeName"`
+}
+
+type DeleteRequest struct {
+	Id     string `json:"id"`
+	Option int    `json:"option"`
 }
