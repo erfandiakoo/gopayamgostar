@@ -1,8 +1,8 @@
 {
-    "hostname": "http://localhost.com",
+    "hostname": "http://37.32.25.204",
     "proxy": "",
     "admin": {
       "username": "admin",
-      "password": "@dmin"
+      "password": "123456789"
     }
   }
