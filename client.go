@@ -277,3 +277,31 @@ func (g *GoPayamgostar) DeletePurchase(ctx context.Context, accessToken string, 
 
 	return checkForError(resp, err, errMessage)
 }
+
+func (g *GoPayamgostar) FindPersonByName(ctx context.Context, accessToken string, typeKey string, firstName string, lastName string) error {
+	const errMessage = "could find person"
+
+	request := FindRequest{
+		TypeKey: typeKey,
+		Queries: []Query{
+			{
+				LogicalOperator: 0,
+				Field:           "firstName",
+				Value:           firstName,
+			},
+			{
+				LogicalOperator: 0,
+				Field:           "lastName",
+				Value:           lastName,
+			},
+		},
+		PageNumber: 1,
+		PageSize:   1,
+	}
+
+	resp, err := g.GetRequestWithBearerAuth(ctx, accessToken).
+		SetBody(request).
+		Post(g.basePath + "/" + g.Config.DeletePurchaseEndpoint)
+
+	return checkForError(resp, err, errMessage)
+}

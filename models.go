@@ -328,3 +328,20 @@ type DeleteRequest struct {
 	Id     string `json:"id"`
 	Option int    `json:"option"`
 }
+
+type FindRequest struct {
+	TypeKey    string  `json:"typeKey"`
+	Queries    []Query `json:"queries"`
+	PageNumber int64   `json:"pageNumber"`
+	PageSize   int64   `json:"pageSize"`
+}
+
+type Query struct {
+	LogicalOperator     int    `json:"logicalOperator"`
+	Operator            int    `json:"operator"`
+	LeafNegate          bool   `json:"leafNegate"`
+	Field               string `json:"field"`
+	FieldOperator       int    `json:"fieldOperator"`
+	Value               string `json:"value"`
+	LeafLogicalOperator int    `json:"leafLogicalOperator"`
+}
