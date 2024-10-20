@@ -290,12 +290,14 @@ func (g *GoPayamgostar) FindPersonByName(ctx context.Context, accessToken string
 		Queries: []Query{
 			{
 				LogicalOperator: 0,
-				Field:           "firstName",
+				Operator:        0,
+				Field:           "FirstName",
 				Value:           firstName,
 			},
 			{
 				LogicalOperator: 0,
-				Field:           "lastName",
+				Operator:        0,
+				Field:           "LastName",
 				Value:           lastName,
 			},
 		},

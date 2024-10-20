@@ -301,9 +301,9 @@ func Test_FindPersonInfoByName(t *testing.T) {
 	personInfo, err := client.FindPersonByName(
 		context.Background(),
 		token.AccessToken,
-		"Contact",
-		"Ali",
-		"Rad",
+		"Kanon01",
+		"عرفان",
+		"دیاکونژاد",
 	)
 	require.NoError(t, err, "Failed to fetch personInfo")
 	t.Log(personInfo)
@@ -311,9 +311,9 @@ func Test_FindPersonInfoByName(t *testing.T) {
 	_, err = client.FindPersonByName(
 		context.Background(),
 		token.AccessToken,
-		"Markaz",
-		"Ali",
-		"Rad",
+		"Kanon01",
+		"عرفان",
+		"دیاکونژاد",
 	)
 	require.Error(t, err, "")
 }
