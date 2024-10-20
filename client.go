@@ -22,6 +22,7 @@ type GoPayamgostar struct {
 		FindFormEndpoint       string
 		UpdateFormEndpoint     string
 		GetPersonEndpoint      string
+		FindPersonEndpoint     string
 		CreatePurchaseEndpoint string
 		DeletePurchaseEndpoint string
 	}
@@ -111,6 +112,7 @@ func NewClient(basePath string, options ...func(*GoPayamgostar)) *GoPayamgostar 
 	c.Config.UpdateFormEndpoint = makeURL("api", "v2", "crmobject", "form", "update")
 	c.Config.FindFormEndpoint = makeURL("api", "v2", "crmobject", "form", "find")
 	c.Config.GetPersonEndpoint = makeURL("api", "v2", "crmobject", "person", "get")
+	c.Config.FindPersonEndpoint = makeURL("api", "v2", "crmobject", "person", "find")
 	c.Config.CreatePurchaseEndpoint = makeURL("api", "v2", "crmobject", "invoice", "purchase", "create")
 	c.Config.DeletePurchaseEndpoint = makeURL("api", "v2", "crmobject", "invoice", "purchase", "delete")
 
