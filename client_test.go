@@ -293,3 +293,27 @@ func Test_CreatePurchase(t *testing.T) {
 	tearDown, _ := CreatePurchase(t, client)
 	defer tearDown()
 }
+
+func Test_FindPersonByName(t *testing.T) {
+	t.Parallel()
+	client := NewClientWithDebug(t)
+	token := GetToken(t, client)
+	personInfo, err := client.FindPersonByName(
+		context.Background(),
+		token.AccessToken,
+		"Markaz",
+		"Ali",
+		"Rad",
+	)
+	require.NoError(t, err, "Failed to fetch personInfo")
+	t.Log(personInfo)
+	FailRequest(client, nil, 1, 0)
+	_, err = client.FindPersonByName(
+		context.Background(),
+		token.AccessToken,
+		"Markaz",
+		"Ali",
+		"Rad",
+	)
+	require.Error(t, err, "")
+}

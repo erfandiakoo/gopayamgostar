@@ -280,8 +280,10 @@ func (g *GoPayamgostar) DeletePurchase(ctx context.Context, accessToken string, 
 	return checkForError(resp, err, errMessage)
 }
 
-func (g *GoPayamgostar) FindPersonByName(ctx context.Context, accessToken string, typeKey string, firstName string, lastName string) error {
+func (g *GoPayamgostar) FindPersonByName(ctx context.Context, accessToken string, typeKey string, firstName string, lastName string) (*PersonInfo, error) {
 	const errMessage = "could find person"
+
+	var result PersonInfo
 
 	request := FindRequest{
 		TypeKey: typeKey,
@@ -303,7 +305,11 @@ func (g *GoPayamgostar) FindPersonByName(ctx context.Context, accessToken string
 
 	resp, err := g.GetRequestWithBearerAuth(ctx, accessToken).
 		SetBody(request).
-		Post(g.basePath + "/" + g.Config.DeletePurchaseEndpoint)
+		Post(g.basePath + "/" + g.Config.FindPersonEndpoint)
 
-	return checkForError(resp, err, errMessage)
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }
