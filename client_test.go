@@ -153,7 +153,7 @@ func FailRequest(client *gopayamgostar.GoPayamgostar, err error, failN, skipN in
 
 func GetToken(t testing.TB, client *gopayamgostar.GoPayamgostar) *gopayamgostar.JWT {
 	cfg := GetConfig(t)
-	token, err := client.PostAuth(
+	token, err := client.Authenticate(
 		context.Background(),
 		cfg.Admin.UserName,
 		cfg.Admin.Password,
@@ -170,7 +170,7 @@ func Test_PostAuth(t *testing.T) {
 	t.Parallel()
 	cfg := GetConfig(t)
 	client := NewClientWithDebug(t)
-	newToken, err := client.PostAuth(
+	newToken, err := client.Authenticate(
 		context.Background(),
 		cfg.Admin.UserName,
 		cfg.Admin.Password,
@@ -185,7 +185,7 @@ func GetUserInfo(t *testing.T) {
 	t.Parallel()
 	client := NewClientWithDebug(t)
 	token := GetToken(t, client)
-	userInfo, err := client.GetPersonInfo(
+	userInfo, err := client.GetPersonInfoById(
 		context.Background(),
 		token.AccessToken,
 		"f845cf77-fec4-4631-b106-7f3d8580321b",
@@ -193,7 +193,7 @@ func GetUserInfo(t *testing.T) {
 	require.NoError(t, err, "Failed to fetch userinfo")
 	t.Log(userInfo)
 	FailRequest(client, nil, 1, 0)
-	_, err = client.GetPersonInfo(
+	_, err = client.GetPersonInfoById(
 		context.Background(),
 		token.AccessToken,
 		"f845cf77-fec4-4631-b106-7f3d8580321b")
@@ -204,7 +204,7 @@ func Test_GetUserInfo(t *testing.T) {
 	t.Parallel()
 	client := NewClientWithDebug(t)
 	token := GetToken(t, client)
-	userInfo, err := client.GetPersonInfo(
+	userInfo, err := client.GetPersonInfoById(
 		context.Background(),
 		token.AccessToken,
 		"f845cf77-fec4-4631-b106-7f3d8580321b",
@@ -212,7 +212,7 @@ func Test_GetUserInfo(t *testing.T) {
 	require.NoError(t, err, "Failed to fetch userinfo")
 	t.Log(userInfo)
 	FailRequest(client, nil, 1, 0)
-	_, err = client.GetPersonInfo(
+	_, err = client.GetPersonInfoById(
 		context.Background(),
 		token.AccessToken,
 		"f845cf77-fec4-4631-b106-7f3d8580321b")
@@ -223,7 +223,7 @@ func Test_GetFormInfo(t *testing.T) {
 	t.Parallel()
 	client := NewClientWithDebug(t)
 	token := GetToken(t, client)
-	formInfo, err := client.GetFormInfo(
+	formInfo, err := client.GetPersonInfoById(
 		context.Background(),
 		token.AccessToken,
 		"d81d07dd-cdc2-479a-99d5-0270a1f8f07d",
@@ -231,7 +231,7 @@ func Test_GetFormInfo(t *testing.T) {
 	require.NoError(t, err, "Failed to fetch forminfo")
 	t.Log(formInfo)
 	FailRequest(client, nil, 1, 0)
-	_, err = client.GetFormInfo(
+	_, err = client.GetPersonInfoById(
 		context.Background(),
 		token.AccessToken,
 		"d81d07dd-cdc2-479a-99d5-0270a1f8f07d")

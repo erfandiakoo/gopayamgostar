@@ -172,7 +172,7 @@ func (g *GoPayamgostar) getFullEndpointURL(path ...string) string {
 	return makeURL(path...)
 }
 
-func (g *GoPayamgostar) PostAuth(ctx context.Context, username string, password string) (*JWT, error) {
+func (g *GoPayamgostar) Authenticate(ctx context.Context, username string, password string) (*JWT, error) {
 	const errMessage = "could not get token"
 
 	var token JWT
@@ -198,7 +198,7 @@ func (g *GoPayamgostar) PostAuth(ctx context.Context, username string, password 
 	return &token, nil
 }
 
-func (g *GoPayamgostar) GetPersonInfo(ctx context.Context, accessToken, crmId string) (*PersonInfo, error) {
+func (g *GoPayamgostar) GetPersonInfoById(ctx context.Context, accessToken, crmId string) (*PersonInfo, error) {
 	const errMessage = "could not get user info"
 
 	var result PersonInfo
@@ -221,7 +221,7 @@ func (g *GoPayamgostar) GetPersonInfo(ctx context.Context, accessToken, crmId st
 	return &result, nil
 }
 
-func (g *GoPayamgostar) GetFormInfo(ctx context.Context, accessToken, crmId string) (*FormInfo, error) {
+func (g *GoPayamgostar) GetFormInfoById(ctx context.Context, accessToken, crmId string) (*FormInfo, error) {
 	const errMessage = "could not get form info"
 
 	var result FormInfo
