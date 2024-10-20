@@ -380,6 +380,43 @@ func Test_FindForm(t *testing.T) {
 	require.Error(t, err, "Expected an error after failing request")
 }
 
+func Test_UpdateForm(t *testing.T) {
+	t.Parallel()
+	client := NewClientWithDebug(t)
+	token := GetToken(t, client)
+
+	updateRequest := gopayamgostar.UpdateFormRequest{
+		CrmId:              "d81d07dd-cdc2-479a-99d5-0270a1f8f07d",
+		ParentCrmObjectId:  nil,
+		ExtendedProperties: nil,
+		Tags: []string{
+			"تایید کارشناس",
+		},
+		StageId:    nil,
+		ColorId:    1,
+		IdentityId: "f845cf77-fec4-4631-b106-7f3d8580321b",
+	}
+
+	// Test successful request
+	crmid, err := client.UpdateForm(
+		context.Background(),
+		token.AccessToken,
+		updateRequest,
+	)
+	require.NoError(t, err, "Failed to update form")
+	t.Log("CRMId:", crmid)
+
+	// Test failure case (simulate request failure)
+	FailRequest(client, nil, 1, 0)
+
+	_, err = client.UpdateForm(
+		context.Background(),
+		token.AccessToken,
+		updateRequest,
+	)
+	require.Error(t, err, "Expected error but got nil")
+}
+
 // Helper function to find field value by userKey in extended properties
 func findFieldValue(properties []gopayamgostar.ExtendedProperty, key string) string {
 	for _, prop := range properties {

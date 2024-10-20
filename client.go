@@ -350,3 +350,22 @@ func (g *GoPayamgostar) FindForm(ctx context.Context, accessToken string, typeKe
 	// Return the result
 	return &result, nil
 }
+
+func (g *GoPayamgostar) UpdateForm(ctx context.Context, accessToken string, request UpdateFormRequest) (string, error) {
+	const errMessage = "could not update form"
+
+	resp, err := g.GetRequestWithBearerAuthNoCache(ctx, accessToken).
+		SetBody(request).
+		Post(g.basePath + "/" + g.Config.UpdateFormEndpoint)
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return "", err
+	}
+
+	crmid, err := getID(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return crmid, nil
+}

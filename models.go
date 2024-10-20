@@ -363,6 +363,20 @@ type ProcessLifePath struct {
 type IncludedFields struct {
 }
 
+type UpdateFormRequest struct {
+	CrmId              string   `json:"CrmId"`
+	ParentCrmObjectId  *string  `json:"ParentCrmObjectId"`
+	ExtendedProperties []string `json:"ExtendedProperties"`
+	Tags               []string `json:"Tags"`
+	RefId              string   `json:"RefId"`
+	StageId            *string  `json:"StageId"`
+	ColorId            int      `json:"ColorId"`
+	IdentityId         string   `json:"IdentityId"`
+	Description        string   `json:"Description"`
+	Subject            string   `json:"Subject"`
+	AssignedToUserName string   `json:"AssignedToUserName"`
+}
+
 // CustomTime handles the time format without the timezone information.
 type CustomTime struct {
 	time.Time
