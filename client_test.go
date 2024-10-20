@@ -27,10 +27,16 @@ type configAdmin struct {
 	Password string `json:"password"`
 }
 
+type configUser struct {
+	UserName string `json:"username"`
+	Password string `json:"password"`
+}
+
 type Config struct {
 	HostName string      `json:"hostname"`
 	Proxy    string      `json:"proxy,omitempty"`
 	Admin    configAdmin `json:"admin"`
+	User     configUser  `json:"user"`
 }
 
 var (
@@ -153,7 +159,7 @@ func FailRequest(client *gopayamgostar.GoPayamgostar, err error, failN, skipN in
 
 func GetToken(t testing.TB, client *gopayamgostar.GoPayamgostar) *gopayamgostar.JWT {
 	cfg := GetConfig(t)
-	token, err := client.Authenticate(
+	token, err := client.AdminAuthenticate(
 		context.Background(),
 		cfg.Admin.UserName,
 		cfg.Admin.Password,
@@ -166,16 +172,31 @@ func GetToken(t testing.TB, client *gopayamgostar.GoPayamgostar) *gopayamgostar.
 // API tests
 // ---------
 
-func Test_Authenticate(t *testing.T) {
+func Test_AdminAuthenticate(t *testing.T) {
 	t.Parallel()
 	cfg := GetConfig(t)
 	client := NewClientWithDebug(t)
-	newToken, err := client.Authenticate(
+	newToken, err := client.AdminAuthenticate(
 		context.Background(),
 		cfg.Admin.UserName,
 		cfg.Admin.Password,
 	)
 	require.NoError(t, err, "Login failed")
+	t.Logf("New token: %+v", *newToken)
+	//require.Equal(t, newToken.ExpiresAt, 0, "Got a refresh token instead of offline")
+	require.NotEmpty(t, newToken.AccessToken, "Got an empty if token")
+}
+
+func Test_UserAuthenticate(t *testing.T) {
+	t.Parallel()
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	newToken, err := client.UserAuthenticate(
+		context.Background(),
+		cfg.User.UserName,
+		cfg.User.Password,
+	)
+	require.NoError(t, err, "User Login failed")
 	t.Logf("New token: %+v", *newToken)
 	//require.Equal(t, newToken.ExpiresAt, 0, "Got a refresh token instead of offline")
 	require.NotEmpty(t, newToken.AccessToken, "Got an empty if token")

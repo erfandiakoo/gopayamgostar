@@ -4,5 +4,9 @@
     "admin": {
       "username": "webservice",
       "password": "123456789"
+    },
+    "user": {
+      "username": "diakoo",
+      "password": "admin123"
     }
   }

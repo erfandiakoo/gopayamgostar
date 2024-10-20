@@ -174,8 +174,34 @@ func (g *GoPayamgostar) getFullEndpointURL(path ...string) string {
 	return makeURL(path...)
 }
 
-func (g *GoPayamgostar) Authenticate(ctx context.Context, username string, password string) (*JWT, error) {
+func (g *GoPayamgostar) AdminAuthenticate(ctx context.Context, username string, password string) (*JWT, error) {
 	const errMessage = "could not get token"
+
+	var token JWT
+	var req *resty.Request
+
+	// Initialize the request here
+	req = g.GetRequest(ctx)
+
+	model := AuthRequest{
+		Username:     username,
+		Password:     password,
+		PlatformType: 1,
+		DeviceId:     uuid.NewString(),
+	}
+	resp, err := req.SetBody(model).
+		SetResult(&token).
+		Post(g.basePath + "/" + g.Config.AuthEndpoint)
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return nil, err
+	}
+
+	return &token, nil
+}
+
+func (g *GoPayamgostar) UserAuthenticate(ctx context.Context, username string, password string) (*JWT, error) {
+	const errMessage = "could not get token(customer)"
 
 	var token JWT
 	var req *resty.Request
