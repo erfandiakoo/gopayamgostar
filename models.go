@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"strings"
+	"time"
 )
 
 // GetQueryParams converts the struct to map[string]string
@@ -143,103 +144,57 @@ type GetRequest struct {
 }
 
 type PersonInfo struct {
-	FirstName                 string          `json:"FirstName"`
-	LastName                  string          `json:"LastName"`
-	BirthDate                 interface{}     `json:"BirthDate"`
-	Gender                    AreasOfInterest `json:"Gender"`
-	GenderIndex               interface{}     `json:"GenderIndex"`
-	PersonPrefix              AreasOfInterest `json:"PersonPrefix"`
-	PersonPrefixIndex         interface{}     `json:"PersonPrefixIndex"`
-	Degree                    AreasOfInterest `json:"Degree"`
-	DegreeIndex               interface{}     `json:"DegreeIndex"`
-	CreditType                AreasOfInterest `json:"CreditType"`
-	CreditTypeIndex           interface{}     `json:"CreditTypeIndex"`
-	NationalCode              string          `json:"NationalCode"`
-	Spouse                    string          `json:"Spouse"`
-	PreferredContactType      AreasOfInterest `json:"PreferredContactType"`
-	PreferredContactTypeIndex interface{}     `json:"PreferredContactTypeIndex"`
-	PaymentStatusType         AreasOfInterest `json:"PaymentStatusType"`
-	PaymentStatusTypeIndex    interface{}     `json:"PaymentStatusTypeIndex"`
-	AreasOfInterest           AreasOfInterest `json:"AreasOfInterest"`
-	AreasOfInterestIndex      interface{}     `json:"AreasOfInterestIndex"`
-	Hobbies                   string          `json:"Hobbies"`
-	Children                  string          `json:"Children"`
-	MannerType                AreasOfInterest `json:"MannerType"`
-	MannerTypeIndex           interface{}     `json:"MannerTypeIndex"`
-	FacebookUsername          string          `json:"FacebookUsername"`
-	Organizations             []interface{}   `json:"Organizations"`
-	NickName                  string          `json:"NickName"`
-	PhoneContacts             []PhoneContact  `json:"PhoneContacts"`
-	AddressContacts           []interface{}   `json:"AddressContacts"`
-	Email                     string          `json:"Email"`
-	AlternativeEmail          string          `json:"AlternativeEmail"`
-	Website                   string          `json:"Website"`
-	CustomerNumber            string          `json:"CustomerNumber"`
-	CustomerDate              interface{}     `json:"CustomerDate"`
-	Balance                   interface{}     `json:"Balance"`
-	Categories                []Category      `json:"Categories"`
-	DontSMS                   interface{}     `json:"DontSms"`
-	DontSocialSMS             interface{}     `json:"DontSocialSms"`
-	DontPhoneCall             interface{}     `json:"DontPhoneCall"`
-	DontEmail                 interface{}     `json:"DontEmail"`
-	DontFax                   interface{}     `json:"DontFax"`
-	SupportOperatorUserID     interface{}     `json:"SupportOperatorUserId"`
-	SaleOperatorUserID        interface{}     `json:"SaleOperatorUserId"`
-	OtherOperatorUserID       interface{}     `json:"OtherOperatorUserId"`
-	SourceTypeIndex           interface{}     `json:"SourceTypeIndex"`
-	ClassificationID          interface{}     `json:"ClassificationId"`
-	IdentityTypeName          AreasOfInterest `json:"IdentityTypeName"`
-	Classification            AreasOfInterest `json:"Classification"`
-	ColorName                 AreasOfInterest `json:"ColorName"`
-	SourceTypeName            AreasOfInterest `json:"SourceTypeName"`
-	SupportOperatorUsername   AreasOfInterest `json:"SupportOperatorUsername"`
-	SaleOperatorUsername      AreasOfInterest `json:"SaleOperatorUsername"`
-	OtherOperatorUsername     AreasOfInterest `json:"OtherOperatorUsername"`
-	CRMID                     string          `json:"CrmId"`
-	CRMObjectTypeIndexPreview AreasOfInterest `json:"CrmObjectTypeIndexPreview"`
-	CRMObjectTypeIndex        int64           `json:"CrmObjectTypeIndex"`
-	CRMObjectTypeName         AreasOfInterest `json:"CrmObjectTypeName"`
-	CRMObjectTypeID           string          `json:"CrmObjectTypeId"`
-	CRMObjectTypeCode         string          `json:"CrmObjectTypeCode"`
-	ParentCRMObjectID         interface{}     `json:"ParentCrmObjectId"`
-	ExtendedProperties        []interface{}   `json:"ExtendedProperties"`
-	//CreatDate                 time.Time        `json:"CreatDate"`
-	//ModifyDate                time.Time        `json:"ModifyDate"`
-	Tags                []interface{}   `json:"Tags"`
-	RefID               string          `json:"RefId"`
-	StageID             interface{}     `json:"StageId"`
-	IdentityIDPreview   AreasOfInterest `json:"IdentityIdPreview"`
-	IdentityID          interface{}     `json:"IdentityId"`
-	Description         string          `json:"Description"`
-	Subject             string          `json:"Subject"`
-	ProcessLifePaths    []interface{}   `json:"ProcessLifePaths"`
-	Color               interface{}     `json:"Color"`
-	ModifierIDPreview   AreasOfInterest `json:"ModifierIdPreview"`
-	ModifierID          string          `json:"ModifierId"`
-	CreatorIDPreview    AreasOfInterest `json:"CreatorIdPreview"`
-	CreatorID           string          `json:"CreatorId"`
-	AssignedToIDPreview AreasOfInterest `json:"AssignedToIdPreview"`
-	AssignedToID        interface{}     `json:"AssignedToId"`
+	FirstName                 string             `json:"firstName"`
+	LastName                  string             `json:"lastName"`
+	BirthDate                 interface{}        `json:"birthDate"`
+	Gender                    string             `json:"gender"`
+	PersonPrefix              string             `json:"personPrefix"`
+	NationalCode              string             `json:"nationalCode"`
+	PreferredContactType      string             `json:"preferredContactType"`
+	FacebookUsername          string             `json:"facebookUsername"`
+	Organizations             []interface{}      `json:"organizations"`
+	NickName                  string             `json:"nickName"`
+	PhoneContacts             []PhoneContact     `json:"phoneContacts"`
+	AddressContacts           []interface{}      `json:"addressContacts"`
+	Email                     string             `json:"email"`
+	AlternativeEmail          string             `json:"alternativeEmail"`
+	Website                   string             `json:"website"`
+	SourceTypeName            string             `json:"sourceTypeName"`
+	CustomerNumber            string             `json:"customerNumber"`
+	ColorName                 string             `json:"colorName"`
+	Classification            string             `json:"classification"`
+	CustomerDate              interface{}        `json:"customerDate"`
+	Balance                   int64              `json:"balance"`
+	IdentityTypeName          string             `json:"identityTypeName"`
+	Categories                []Category         `json:"categories"`
+	SupportUsername           string             `json:"supportUsername"`
+	SaleUsername              string             `json:"saleUsername"`
+	OtherUsername             string             `json:"otherUsername"`
+	CRMID                     string             `json:"crmId"`
+	CRMObjectTypeName         interface{}        `json:"crmObjectTypeName"`
+	CRMObjectTypeCode         string             `json:"crmObjectTypeCode"`
+	CRMObjectTypeIndex        int64              `json:"crmObjectTypeIndex"`
+	CRMObjectTypeID           string             `json:"crmObjectTypeId"`
+	ParentCRMObjectID         interface{}        `json:"parentCrmObjectId"`
+	ExtendedProperties        []ExtendedProperty `json:"extendedProperties"`
+	ProcessLifePaths          []interface{}      `json:"processLifePaths"`
+	CreatDate                 time.Time          `json:"creatDate"`
+	ModifyDate                time.Time          `json:"modifyDate"`
+	RefID                     string             `json:"refId"`
+	StageID                   interface{}        `json:"stageId"`
+	IdentityID                string             `json:"identityId"`
+	Description               string             `json:"description"`
+	Subject                   string             `json:"subject"`
+	ModifierIDPreview         interface{}        `json:"modifierIdPreview"`
+	CreatorIDPreview          interface{}        `json:"creatorIdPreview"`
+	CRMObjectTypeIndexPreview interface{}        `json:"crmObjectTypeIndexPreview"`
+	IdentityIDPreview         interface{}        `json:"identityIdPreview"`
+	AssignedToIDPreview       interface{}        `json:"assignedToIdPreview"`
+	IncludedFields            IncludedFields     `json:"includedFields"`
 }
 
 type AreasOfInterest struct {
 	Name string `json:"Name"`
-}
-
-type Category struct {
-	ID   string `json:"Id"`
-	Name string `json:"Name"`
-	Key  string `json:"Key"`
-	Type string `json:"Type"`
-}
-
-type PhoneContact struct {
-	PhoneType       string `json:"PhoneType"`
-	PhoneNumber     string `json:"PhoneNumber"`
-	ContinuedNumber string `json:"ContinuedNumber"`
-	Extension       string `json:"Extension"`
-	ID              string `json:"Id"`
-	Default         bool   `json:"Default"`
 }
 
 type FormInfo struct {
@@ -270,12 +225,6 @@ type FormInfo struct {
 
 type AssignedToIDPreview struct {
 	Name string `json:"Name"`
-}
-
-type ExtendedProperty struct {
-	Value   string      `json:"Value"`
-	UserKey string      `json:"UserKey"`
-	Preview interface{} `json:"Preview"`
 }
 
 type CreatePurchase struct {
@@ -329,6 +278,11 @@ type DeleteRequest struct {
 	Option int    `json:"option"`
 }
 
+type FindResponse struct {
+	Data  []PersonInfo `json:"data"`
+	Total int64        `json:"total"`
+}
+
 type FindRequest struct {
 	TypeKey    string  `json:"typeKey"`
 	Queries    []Query `json:"queries"`
@@ -339,9 +293,84 @@ type FindRequest struct {
 type Query struct {
 	LogicalOperator     int    `json:"logicalOperator"`
 	Operator            int    `json:"operator"`
-	LeafNegate          bool   `json:"leafNegate"`
+	LeafNegate          bool   `json:"leafNegate,omitempty"`
 	Field               string `json:"field"`
-	FieldOperator       int    `json:"fieldOperator"`
+	FieldOperator       int    `json:"fieldOperator,omitempty"`
 	Value               string `json:"value"`
-	LeafLogicalOperator int    `json:"leafLogicalOperator"`
+	LeafLogicalOperator int    `json:"leafLogicalOperator,omitempty"`
+}
+
+type Datum struct {
+	FirstName                 string             `json:"firstName"`
+	LastName                  string             `json:"lastName"`
+	BirthDate                 interface{}        `json:"birthDate"`
+	Gender                    string             `json:"gender"`
+	PersonPrefix              string             `json:"personPrefix"`
+	NationalCode              string             `json:"nationalCode"`
+	PreferredContactType      string             `json:"preferredContactType"`
+	FacebookUsername          string             `json:"facebookUsername"`
+	Organizations             []interface{}      `json:"organizations"`
+	NickName                  string             `json:"nickName"`
+	PhoneContacts             []PhoneContact     `json:"phoneContacts"`
+	AddressContacts           []interface{}      `json:"addressContacts"`
+	Email                     string             `json:"email"`
+	AlternativeEmail          string             `json:"alternativeEmail"`
+	Website                   string             `json:"website"`
+	SourceTypeName            string             `json:"sourceTypeName"`
+	CustomerNumber            string             `json:"customerNumber"`
+	ColorName                 string             `json:"colorName"`
+	Classification            string             `json:"classification"`
+	CustomerDate              interface{}        `json:"customerDate"`
+	Balance                   int64              `json:"balance"`
+	IdentityTypeName          string             `json:"identityTypeName"`
+	Categories                []Category         `json:"categories"`
+	SupportUsername           string             `json:"supportUsername"`
+	SaleUsername              string             `json:"saleUsername"`
+	OtherUsername             string             `json:"otherUsername"`
+	CRMID                     string             `json:"crmId"`
+	CRMObjectTypeName         interface{}        `json:"crmObjectTypeName"`
+	CRMObjectTypeCode         string             `json:"crmObjectTypeCode"`
+	CRMObjectTypeIndex        int64              `json:"crmObjectTypeIndex"`
+	CRMObjectTypeID           string             `json:"crmObjectTypeId"`
+	ParentCRMObjectID         interface{}        `json:"parentCrmObjectId"`
+	ExtendedProperties        []ExtendedProperty `json:"extendedProperties"`
+	ProcessLifePaths          []interface{}      `json:"processLifePaths"`
+	CreatDate                 time.Time          `json:"creatDate"`
+	ModifyDate                time.Time          `json:"modifyDate"`
+	RefID                     string             `json:"refId"`
+	StageID                   interface{}        `json:"stageId"`
+	IdentityID                string             `json:"identityId"`
+	Description               string             `json:"description"`
+	Subject                   string             `json:"subject"`
+	ModifierIDPreview         interface{}        `json:"modifierIdPreview"`
+	CreatorIDPreview          interface{}        `json:"creatorIdPreview"`
+	CRMObjectTypeIndexPreview interface{}        `json:"crmObjectTypeIndexPreview"`
+	IdentityIDPreview         interface{}        `json:"identityIdPreview"`
+	AssignedToIDPreview       interface{}        `json:"assignedToIdPreview"`
+	IncludedFields            IncludedFields     `json:"includedFields"`
+}
+
+type Category struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Key  string `json:"key"`
+	Type string `json:"type"`
+}
+
+type ExtendedProperty struct {
+	Value   string      `json:"value"`
+	UserKey string      `json:"userKey"`
+	Preview interface{} `json:"preview"`
+}
+
+type IncludedFields struct {
+}
+
+type PhoneContact struct {
+	PhoneType       string `json:"phoneType"`
+	PhoneNumber     string `json:"phoneNumber"`
+	ContinuedNumber string `json:"continuedNumber"`
+	Extension       string `json:"extension"`
+	ID              string `json:"id"`
+	Default         bool   `json:"default"`
 }
