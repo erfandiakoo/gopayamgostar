@@ -301,9 +301,9 @@ func Test_FindPersonInfoByName(t *testing.T) {
 	personInfo, err := client.FindPersonByName(
 		context.Background(),
 		token.AccessToken,
-		"Kanon01",
-		"عرفان",
-		"دیاکونژاد",
+		*gopayamgostar.StringP("Kanon01"),
+		*gopayamgostar.StringP("عرفان"),
+		*gopayamgostar.StringP("دیاکونژاد"),
 	)
 	require.NoError(t, err, "Failed to fetch personInfo")
 	t.Log(personInfo)
@@ -311,9 +311,9 @@ func Test_FindPersonInfoByName(t *testing.T) {
 	_, err = client.FindPersonByName(
 		context.Background(),
 		token.AccessToken,
-		"Kanon01",
-		"عرفان",
-		"دیاکونژاد",
+		*gopayamgostar.StringP("Kanon01"),
+		*gopayamgostar.StringP("عرفان"),
+		*gopayamgostar.StringP("دیاکونژاد"),
 	)
 	require.Error(t, err, "")
 }
@@ -325,9 +325,9 @@ func FindPersonInfoByName(t *testing.T) {
 	userInfo, err := client.FindPersonByName(
 		context.Background(),
 		token.AccessToken,
-		"Kanon01",
-		"عرفان",
-		"دیاکونژاد",
+		*gopayamgostar.StringP("Kanon01"),
+		*gopayamgostar.StringP("عرفان"),
+		*gopayamgostar.StringP("دیاکونژاد"),
 	)
 	require.NoError(t, err, "Failed to fetch personInfo")
 	t.Log(userInfo)
@@ -335,9 +335,57 @@ func FindPersonInfoByName(t *testing.T) {
 	_, err = client.FindPersonByName(
 		context.Background(),
 		token.AccessToken,
-		"Kanon01",
-		"عرفان",
-		"دیاکونژاد",
+		*gopayamgostar.StringP("Kanon01"),
+		*gopayamgostar.StringP("عرفان"),
+		*gopayamgostar.StringP("دیاکونژاد"),
 	)
 	require.Error(t, err, "")
+}
+
+func Test_FindForm(t *testing.T) {
+	t.Parallel()
+	client := NewClientWithDebug(t)
+	token := GetToken(t, client)
+
+	// Define the queries for filtering BankAccount forms
+	queries := []gopayamgostar.Query{
+		{
+			LogicalOperator: 0,
+			Field:           *gopayamgostar.StringP("TrackingNumber"),
+			Value:           *gopayamgostar.StringP("778756"),
+		},
+		{
+			LogicalOperator: 0,
+			Field:           *gopayamgostar.StringP("DepositAmount"),
+			Value:           *gopayamgostar.StringP("625000000"),
+		},
+	}
+
+	// Fetch the form information
+	formInfo, err := client.FindForm(
+		context.Background(),
+		token.AccessToken,
+		"BankAccount",
+		queries,
+	)
+	require.NoError(t, err, "Failed to fetch formInfo")
+	t.Log(formInfo)
+	// Ensure that subsequent request results in an error (simulate failure)
+	_, err = client.FindForm(
+		context.Background(),
+		token.AccessToken,
+		"BankAccount",
+		queries,
+	)
+	require.Error(t, err, "Expected an error after failing request")
+}
+
+// Helper function to find field value by userKey in extended properties
+func findFieldValue(properties []gopayamgostar.ExtendedProperty, key string) string {
+	for _, prop := range properties {
+		if prop.UserKey == key {
+			return prop.Value
+		}
+	}
+	return ""
 }

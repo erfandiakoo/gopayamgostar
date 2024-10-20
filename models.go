@@ -164,7 +164,7 @@ type PersonInfo struct {
 	ColorName                 string             `json:"colorName"`
 	Classification            string             `json:"classification"`
 	CustomerDate              interface{}        `json:"customerDate"`
-	Balance                   int64              `json:"balance"`
+	Balance                   float64            `json:"balance"`
 	IdentityTypeName          string             `json:"identityTypeName"`
 	Categories                []Category         `json:"categories"`
 	SupportUsername           string             `json:"supportUsername"`
@@ -178,8 +178,8 @@ type PersonInfo struct {
 	ParentCRMObjectID         interface{}        `json:"parentCrmObjectId"`
 	ExtendedProperties        []ExtendedProperty `json:"extendedProperties"`
 	ProcessLifePaths          []interface{}      `json:"processLifePaths"`
-	CreatDate                 time.Time          `json:"creatDate"`
-	ModifyDate                time.Time          `json:"modifyDate"`
+	CreatDate                 CustomTime         `json:"creatDate"`
+	ModifyDate                CustomTime         `json:"modifyDate"`
 	RefID                     string             `json:"refId"`
 	StageID                   interface{}        `json:"stageId"`
 	IdentityID                string             `json:"identityId"`
@@ -300,56 +300,6 @@ type Query struct {
 	LeafLogicalOperator int    `json:"leafLogicalOperator,omitempty"`
 }
 
-type Datum struct {
-	FirstName                 string             `json:"firstName"`
-	LastName                  string             `json:"lastName"`
-	BirthDate                 interface{}        `json:"birthDate"`
-	Gender                    string             `json:"gender"`
-	PersonPrefix              string             `json:"personPrefix"`
-	NationalCode              string             `json:"nationalCode"`
-	PreferredContactType      string             `json:"preferredContactType"`
-	FacebookUsername          string             `json:"facebookUsername"`
-	Organizations             []interface{}      `json:"organizations"`
-	NickName                  string             `json:"nickName"`
-	PhoneContacts             []PhoneContact     `json:"phoneContacts"`
-	AddressContacts           []interface{}      `json:"addressContacts"`
-	Email                     string             `json:"email"`
-	AlternativeEmail          string             `json:"alternativeEmail"`
-	Website                   string             `json:"website"`
-	SourceTypeName            string             `json:"sourceTypeName"`
-	CustomerNumber            string             `json:"customerNumber"`
-	ColorName                 string             `json:"colorName"`
-	Classification            string             `json:"classification"`
-	CustomerDate              interface{}        `json:"customerDate"`
-	Balance                   int64              `json:"balance"`
-	IdentityTypeName          string             `json:"identityTypeName"`
-	Categories                []Category         `json:"categories"`
-	SupportUsername           string             `json:"supportUsername"`
-	SaleUsername              string             `json:"saleUsername"`
-	OtherUsername             string             `json:"otherUsername"`
-	CRMID                     string             `json:"crmId"`
-	CRMObjectTypeName         interface{}        `json:"crmObjectTypeName"`
-	CRMObjectTypeCode         string             `json:"crmObjectTypeCode"`
-	CRMObjectTypeIndex        int64              `json:"crmObjectTypeIndex"`
-	CRMObjectTypeID           string             `json:"crmObjectTypeId"`
-	ParentCRMObjectID         interface{}        `json:"parentCrmObjectId"`
-	ExtendedProperties        []ExtendedProperty `json:"extendedProperties"`
-	ProcessLifePaths          []interface{}      `json:"processLifePaths"`
-	CreatDate                 time.Time          `json:"creatDate"`
-	ModifyDate                time.Time          `json:"modifyDate"`
-	RefID                     string             `json:"refId"`
-	StageID                   interface{}        `json:"stageId"`
-	IdentityID                string             `json:"identityId"`
-	Description               string             `json:"description"`
-	Subject                   string             `json:"subject"`
-	ModifierIDPreview         interface{}        `json:"modifierIdPreview"`
-	CreatorIDPreview          interface{}        `json:"creatorIdPreview"`
-	CRMObjectTypeIndexPreview interface{}        `json:"crmObjectTypeIndexPreview"`
-	IdentityIDPreview         interface{}        `json:"identityIdPreview"`
-	AssignedToIDPreview       interface{}        `json:"assignedToIdPreview"`
-	IncludedFields            IncludedFields     `json:"includedFields"`
-}
-
 type Category struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -363,9 +313,6 @@ type ExtendedProperty struct {
 	Preview interface{} `json:"preview"`
 }
 
-type IncludedFields struct {
-}
-
 type PhoneContact struct {
 	PhoneType       string `json:"phoneType"`
 	PhoneNumber     string `json:"phoneNumber"`
@@ -373,4 +320,63 @@ type PhoneContact struct {
 	Extension       string `json:"extension"`
 	ID              string `json:"id"`
 	Default         bool   `json:"default"`
+}
+
+type FindFormResponse struct {
+	Data  []FormResponse `json:"data"`
+	Total int64          `json:"total"`
+}
+
+type FormResponse struct {
+	CRMID                     string             `json:"crmId"`
+	CRMObjectTypeName         interface{}        `json:"crmObjectTypeName"`
+	CRMObjectTypeCode         string             `json:"crmObjectTypeCode"`
+	CRMObjectTypeIndex        int64              `json:"crmObjectTypeIndex"`
+	CRMObjectTypeID           string             `json:"crmObjectTypeId"`
+	ParentCRMObjectID         interface{}        `json:"parentCrmObjectId"`
+	ExtendedProperties        []ExtendedProperty `json:"extendedProperties"`
+	ProcessLifePaths          []ProcessLifePath  `json:"processLifePaths"`
+	CreatDate                 CustomTime         `json:"creatDate"`
+	ModifyDate                CustomTime         `json:"modifyDate"`
+	RefID                     string             `json:"refId"`
+	StageID                   interface{}        `json:"stageId"`
+	IdentityID                interface{}        `json:"identityId"`
+	Description               string             `json:"description"`
+	Subject                   string             `json:"subject"`
+	ModifierIDPreview         interface{}        `json:"modifierIdPreview"`
+	CreatorIDPreview          interface{}        `json:"creatorIdPreview"`
+	CRMObjectTypeIndexPreview interface{}        `json:"crmObjectTypeIndexPreview"`
+	IdentityIDPreview         interface{}        `json:"identityIdPreview"`
+	AssignedToIDPreview       interface{}        `json:"assignedToIdPreview"`
+	IncludedFields            IncludedFields     `json:"includedFields"`
+}
+
+type ProcessLifePath struct {
+	ID                 string     `json:"id"`
+	ProcessInstanceID  int64      `json:"processInstanceId"`
+	ProcessTypeStateID string     `json:"processTypeStateId"`
+	Index              int64      `json:"index"`
+	Name               string     `json:"name"`
+	CreateDate         CustomTime `json:"createDate"`
+}
+
+type IncludedFields struct {
+}
+
+// CustomTime handles the time format without the timezone information.
+type CustomTime struct {
+	time.Time
+}
+
+// UnmarshalJSON handles the custom parsing logic for the time field.
+func (ct *CustomTime) UnmarshalJSON(b []byte) error {
+	const layout = "2006-01-02T15:04:05.999"
+	// Remove quotes from the JSON string
+	s := strings.Trim(string(b), "\"")
+	parsedTime, err := time.Parse(layout, s)
+	if err != nil {
+		return err
+	}
+	ct.Time = parsedTime
+	return nil
 }

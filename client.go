@@ -313,5 +313,40 @@ func (g *GoPayamgostar) FindPersonByName(ctx context.Context, accessToken string
 		return nil, err
 	}
 
+	// Unmarshal response into the result struct
+	if err := json.Unmarshal(resp.Body(), &result); err != nil {
+		return nil, fmt.Errorf("%s: %w", errMessage, err)
+	}
+
+	// Return the result
+	return &result, nil
+}
+
+func (g *GoPayamgostar) FindForm(ctx context.Context, accessToken string, typeKey string, queries []Query) (*FindFormResponse, error) {
+	const errMessage = "could find form"
+
+	var result FindFormResponse
+
+	request := FindRequest{
+		TypeKey:    *StringP(typeKey),
+		Queries:    queries,
+		PageNumber: *Int64P(1),
+		PageSize:   *Int64P(10),
+	}
+
+	resp, err := g.GetRequestWithBearerAuthNoCache(ctx, accessToken).
+		SetBody(request).
+		Post(g.basePath + "/" + g.Config.FindFormEndpoint)
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return nil, err
+	}
+
+	// Unmarshal response into the result struct
+	if err := json.Unmarshal(resp.Body(), &result); err != nil {
+		return nil, fmt.Errorf("%s: %w", errMessage, err)
+	}
+
+	// Return the result
 	return &result, nil
 }

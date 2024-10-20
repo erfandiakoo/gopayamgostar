@@ -2,7 +2,7 @@
     "hostname": "http://37.32.25.204",
     "proxy": "",
     "admin": {
-      "username": "admin",
+      "username": "webservice",
       "password": "123456789"
     }
   }
