@@ -395,3 +395,22 @@ func (g *GoPayamgostar) UpdateForm(ctx context.Context, accessToken string, requ
 
 	return crmid, nil
 }
+
+func (g *GoPayamgostar) CreateForm(ctx context.Context, accessToken string, request CreateFormRequest) (string, error) {
+	const errMessage = "could not create form"
+
+	resp, err := g.GetRequestWithBearerAuthNoCache(ctx, accessToken).
+		SetBody(request).
+		Post(g.basePath + "/" + g.Config.CreateFormEndpoint)
+
+	if err := checkForError(resp, err, errMessage); err != nil {
+		return "", err
+	}
+
+	crmid, err := getID(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return crmid, nil
+}

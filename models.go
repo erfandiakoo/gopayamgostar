@@ -394,3 +394,17 @@ func (ct *CustomTime) UnmarshalJSON(b []byte) error {
 	ct.Time = parsedTime
 	return nil
 }
+
+type CreateFormRequest struct {
+	CRMObjectTypeCode  string             `json:"CrmObjectTypeCode"`
+	ParentCRMObjectID  *string            `json:"ParentCrmObjectId"`
+	ExtendedProperties []ExtendedProperty `json:"ExtendedProperties"`
+	Tags               []string           `json:"Tags"`
+	RefID              *string            `json:"RefId"`
+	StageID            *string            `json:"StageId"`
+	ColorID            int64              `json:"ColorId"`
+	IdentityID         string             `json:"IdentityId"`
+	Description        *string            `json:"Description"`
+	Subject            *string            `json:"Subject"`
+	AssignedToUserName *string            `json:"AssignedToUserName"`
+}

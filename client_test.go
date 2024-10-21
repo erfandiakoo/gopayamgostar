@@ -438,6 +438,85 @@ func Test_UpdateForm(t *testing.T) {
 	require.Error(t, err, "Expected error but got nil")
 }
 
+func Test_CreateForm(t *testing.T) {
+	t.Parallel()
+	client := NewClientWithDebug(t)
+	token := GetToken(t, client)
+
+	createRequest := gopayamgostar.CreateFormRequest{
+		CRMObjectTypeCode: "SettlementRequest",
+		ParentCRMObjectID: nil,
+		ExtendedProperties: []gopayamgostar.ExtendedProperty{
+			{
+				UserKey: "DepositDate",
+				Value:   *gopayamgostar.StringP("1403/12/12"),
+			},
+			{
+				UserKey: "DepositAmount",
+				Value:   *gopayamgostar.StringP("1000"),
+			},
+			{
+				UserKey: "TrackingNumber",
+				Value:   *gopayamgostar.StringP("112233"),
+			},
+			{
+				UserKey: "CenterDetails",
+				Value:   *gopayamgostar.StringP("CITY CENTER TEST"),
+			},
+			{
+				UserKey: "fishType",
+				Value:   *gopayamgostar.StringP("فردی"),
+			},
+			{
+				UserKey: "fishSubType",
+				Value:   *gopayamgostar.StringP("فردی"),
+			},
+			{
+				UserKey: "Users",
+				Value:   *gopayamgostar.StringP("1"),
+			},
+			{
+				UserKey: "fishnum2",
+				Value:   *gopayamgostar.StringP("131213"),
+			},
+			{
+				UserKey: "Erjanum",
+				Value:   *gopayamgostar.StringP("131213"),
+			},
+			{
+				UserKey: "FurtherDescription",
+				Value:   *gopayamgostar.StringP("test"),
+			},
+		},
+		IdentityID:         "",
+		Tags:               nil,
+		RefID:              nil,
+		ColorID:            1,
+		AssignedToUserName: nil,
+		StageID:            nil,
+		Subject:            nil,
+	}
+
+	// Test successful request
+	crmid, err := client.CreateForm(
+		context.Background(),
+		token.AccessToken,
+		createRequest,
+	)
+	require.NoError(t, err, "Failed to create form")
+	t.Log("CRMId:", crmid)
+
+	// Test failure case (simulate request failure)
+	FailRequest(client, nil, 1, 0)
+
+	_, err = client.CreateForm(
+		context.Background(),
+		token.AccessToken,
+		createRequest,
+	)
+	require.Error(t, err, "Expected error but got nil")
+}
+
 // Helper function to find field value by userKey in extended properties
 func findFieldValue(properties []gopayamgostar.ExtendedProperty, key string) string {
 	for _, prop := range properties {
