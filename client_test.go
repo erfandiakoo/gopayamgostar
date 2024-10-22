@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/erfandiakoo/gopayamgostar/v2"
+	"github.com/erfandiakoo/gopayamgostar/v2/shared/enums"
 	"github.com/go-resty/resty/v2"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/exp/rand"
@@ -371,12 +372,12 @@ func Test_FindForm(t *testing.T) {
 	// Define the queries for filtering BankAccount forms
 	queries := []gopayamgostar.Query{
 		{
-			LogicalOperator: 0,
+			LogicalOperator: int(enums.And),
 			Field:           *gopayamgostar.StringP("TrackingNumber"),
 			Value:           *gopayamgostar.StringP("778756"),
 		},
 		{
-			LogicalOperator: 0,
+			LogicalOperator: int(enums.And),
 			Field:           *gopayamgostar.StringP("DepositAmount"),
 			Value:           *gopayamgostar.StringP("625000000"),
 		},
@@ -515,14 +516,4 @@ func Test_CreateForm(t *testing.T) {
 		createRequest,
 	)
 	require.Error(t, err, "Expected error but got nil")
-}
-
-// Helper function to find field value by userKey in extended properties
-func findFieldValue(properties []gopayamgostar.ExtendedProperty, key string) string {
-	for _, prop := range properties {
-		if prop.UserKey == key {
-			return prop.Value
-		}
-	}
-	return ""
 }

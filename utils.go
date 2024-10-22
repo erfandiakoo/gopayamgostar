@@ -2,8 +2,14 @@ package gopayamgostar
 
 import (
 	"context"
+	"fmt"
+	"log"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/opentracing/opentracing-go"
+	ptime "github.com/yaa110/go-persian-calendar"
 )
 
 type contextKey string
@@ -125,4 +131,32 @@ func NilOrEmptySlice(value *[]string) bool {
 // WithTracer generates a context that has a tracer attached
 func WithTracer(ctx context.Context, tracer opentracing.Tracer) context.Context {
 	return context.WithValue(ctx, tracerContextKey, tracer)
+}
+
+func GregorianToShamsi(gDate string) string {
+	parts := strings.Split(gDate, "-")
+
+	if len(parts) != 3 {
+		log.Printf("invalid date format, expected yyyy/mm/dd, got: %s", gDate)
+	}
+
+	pYear, err := strconv.Atoi(parts[0])
+	if err != nil {
+		log.Printf("invalid year: %v", err)
+	}
+	pMonth, err := strconv.Atoi(parts[1])
+	if err != nil {
+		log.Printf("invalid month: %v", err)
+	}
+	pDay, err := strconv.Atoi(parts[2])
+	if err != nil {
+		log.Printf("invalid day: %v", err)
+	}
+
+	var t time.Time = time.Date(pYear, time.Month(pMonth), pDay, 0, 0, 0, 0, ptime.Iran())
+	pt := ptime.New(t)
+
+	persianYear, persianMonth, persianDay := pt.Date()
+
+	return fmt.Sprintf("%d/%02d/%02d", persianYear, persianMonth, persianDay)
 }
