@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/erfandiakoo/gopayamgostar/v2/shared/enums"
 	"github.com/go-resty/resty/v2"
 	"github.com/google/uuid"
 	"github.com/opentracing/opentracing-go"
@@ -17,6 +18,7 @@ type GoPayamgostar struct {
 	restyClient *resty.Client
 	Config      struct {
 		AuthEndpoint           string
+		RefreshTokenEndpoint   string
 		GetFormEndpoint        string
 		CreateFormEndpoint     string
 		FindFormEndpoint       string
@@ -107,6 +109,7 @@ func NewClient(basePath string, options ...func(*GoPayamgostar)) *GoPayamgostar 
 	}
 
 	c.Config.AuthEndpoint = makeURL("api", "v2", "auth", "login")
+	c.Config.RefreshTokenEndpoint = makeURL("api", "v2", "auth", "token", "refresh")
 	c.Config.GetFormEndpoint = makeURL("api", "v2", "crmobject", "form", "get")
 	c.Config.CreateFormEndpoint = makeURL("api", "v2", "crmobject", "form", "create")
 	c.Config.UpdateFormEndpoint = makeURL("api", "v2", "crmobject", "form", "update")
@@ -186,7 +189,7 @@ func (g *GoPayamgostar) AdminAuthenticate(ctx context.Context, username string, 
 	model := AuthRequest{
 		Username:     username,
 		Password:     password,
-		PlatformType: 1,
+		PlatformType: int(enums.Web),
 		DeviceId:     uuid.NewString(),
 	}
 	resp, err := req.SetBody(model).
